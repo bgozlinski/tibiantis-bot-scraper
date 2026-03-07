@@ -1,19 +1,18 @@
 from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
-
-http_client: httpx.AsyncClient = None
+from app.routers import character
+from app.core.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global http_client
-    http_client = httpx.AsyncClient()
+    app.state.http_client = httpx.AsyncClient()
     yield
-    await http_client.aclose()
+    await app.state.http_client.aclose()
+
 app = FastAPI(lifespan=lifespan)
 
-async def get_http_client():
-    return http_client
+app.include_router(character.router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
 async def root():
