@@ -27,7 +27,7 @@ class Scraper:
                     key = columns[0].text.strip().lower().rstrip(':')
                     value = columns[1].text.strip()
                     character_dict[key] = value
-
+                print(character_dict)
                 return CharacterCreate.model_validate(character_dict)
             else:
                 return None
