@@ -1,0 +1,17 @@
+[project]
+name = "tibiantis-bot-scraper"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "bgozlinski",email = "bartlomiej.gozlinski@gmail.com"}
+]
+readme = "README.md"
+requires-python = "^3.13"
+dependencies = [
+    "fastapi[standard] (>=0.135.1,<0.136.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
