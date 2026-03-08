@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
-from app.routers import character
+from app.routers import character, blacklist
 from app.core.config import settings
 
 @asynccontextmanager
@@ -13,6 +13,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(character.router, prefix=settings.API_V1_PREFIX)
+app.include_router(blacklist.router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
 async def root():
