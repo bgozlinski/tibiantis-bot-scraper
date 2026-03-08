@@ -2,6 +2,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.core.database import SessionLocal
 from app.services.online_checker import OnlineChecker
 from app.services.bedmage_timer import BedmageTimerService
+from app.core.config import settings
 
 async def job_check_everything(client):
     db = SessionLocal()
@@ -15,6 +16,6 @@ async def job_check_everything(client):
 
 def start_scheduler(client):
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(job_check_everything, 'interval', minutes=1, args=[client])
+    scheduler.add_job(job_check_everything, 'interval', minutes=settings.SCHEDULER_TIMER_MINUTES, args=[client])
     scheduler.start()
     return scheduler

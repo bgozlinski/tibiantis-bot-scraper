@@ -23,6 +23,8 @@ class Settings(BaseSettings):
 
     DISCORD_WEBHOOK_URL: str
 
+    SCHEDULER_TIMER_MINUTES: int = 15
+
 
     model_config = ConfigDict(env_file=".env", case_sensitive=True)
 
