@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
 
+    DISCORD_WEBHOOK_URL: str
+
 
     model_config = ConfigDict(env_file=".env", case_sensitive=True)
 
