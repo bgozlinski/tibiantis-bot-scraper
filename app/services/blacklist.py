@@ -10,8 +10,11 @@ class BlacklistService:
     @staticmethod
     async def add_to_blacklist(db: Session, data: BlacklistCreate, client: httpx.AsyncClient) -> BlacklistModel:
         char_exists = db.query(CharacterModel).filter(CharacterModel.name == data.character_name).first()
-        if not char_exists :
-            await CharacterService.scrape_and_save_character(data.character_name, db, client)
+        if not char_exists:
+            try:
+                await CharacterService.scrape_and_save_character(data.character_name, db, client)
+            except Exception as e:
+                raise ValueError(f"Could not scrape character '{data.character_name}': {e}")
 
         existing_entry = db.query(BlacklistModel).filter(BlacklistModel.character_name == data.character_name).first()
         if existing_entry:

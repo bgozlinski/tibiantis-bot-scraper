@@ -1,19 +1,27 @@
 from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
-from app.routers import character, blacklist
+from app.routers import character, blacklist, bedmage_timer
 from app.core.config import settings
+from app.services.scheduler import start_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.http_client = httpx.AsyncClient()
+    client = httpx.AsyncClient(timeout=30.0)
+    app.state.http_client = client
+
+    scheduler = start_scheduler(client)
+
     yield
+
+    scheduler.shutdown()
     await app.state.http_client.aclose()
 
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(character.router, prefix=settings.API_V1_PREFIX)
 app.include_router(blacklist.router, prefix=settings.API_V1_PREFIX)
+app.include_router(bedmage_timer.router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
 async def root():

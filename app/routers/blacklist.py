@@ -23,7 +23,7 @@ async def add_to_blacklist(
 ):
     try:
         return await BlacklistService.add_to_blacklist(db, BlacklistCreate(character_name=name), client)
-    except ValueError as e:
+    except (ValueError, Exception) as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.delete("/{entry_id}")

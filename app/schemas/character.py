@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field, AliasPath, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from datetime import timezone, timedelta
 
 
 class Character(BaseModel):
@@ -17,13 +18,16 @@ class Character(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
+
     @field_validator("last_login", mode="before")
     @classmethod
     def convert_last_login(cls, v):
+        CET = timezone(timedelta(hours=1))
         if isinstance(v, str):
             clean_date = v.split(" CE")[0].strip()
             try:
-                return datetime.strptime(clean_date, "%d %b %Y %H:%M:%S")
+                dt = datetime.strptime(clean_date, "%d %b %Y %H:%M:%S")
+                return dt.replace(tzinfo=CET)
             except ValueError:
                 return None
         return v

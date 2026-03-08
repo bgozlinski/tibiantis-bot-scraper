@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 from typing import List
 from sqlalchemy.orm import Session
 from app.models.blacklist import BlacklistEntry as BlacklistModel
+from datetime import datetime, timezone
+from app.models.character import Character as CharacterModel
+from app.models.bedmage_timer import BedmageTimer as TimerModel
 
 
 
@@ -33,10 +36,10 @@ class OnlineChecker:
 
     async def update_online_status(self, db: Session, client: httpx.AsyncClient):
         online_names = await self.get_characters_online_list(client)
+
         db_blacklist = db.query(BlacklistModel).all()
 
         for entry in db_blacklist:
-            is_currently_online = entry.character_name in online_names
-            entry.is_online = is_currently_online
+            entry.is_online = entry.character_name in online_names
 
         db.commit()
