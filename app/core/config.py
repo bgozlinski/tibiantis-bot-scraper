@@ -21,9 +21,11 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
 
-    DISCORD_WEBHOOK_URL: str
+    DISCORD_WEBHOOK_URL: str = ""
+    DISCORD_DEATHS_WEBHOOK_URL: str = ""
 
-    SCHEDULER_TIMER_MINUTES: int = 15
+    SCHEDULER_TIMER_MINUTES: int = 5
+    MIN_LEVEL_TO_CHECK_DEATH: int = 30
 
 
     model_config = ConfigDict(env_file=".env", case_sensitive=True)
