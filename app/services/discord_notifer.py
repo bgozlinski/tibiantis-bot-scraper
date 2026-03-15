@@ -20,8 +20,8 @@ class DiscordNotifier:
 
     @staticmethod
     async def send_death_embed(death: dict, client: httpx.AsyncClient):
-        webhook_url = settings.DISCORD_DEATHS_WEBHOOK_URL or settings.DISCORD_WEBHOOK_URL
-        if not webhook_url:
+        webhook_urls = settings.discord_deaths_webhook_urls_list or ([settings.DISCORD_WEBHOOK_URL] if settings.DISCORD_WEBHOOK_URL else [])
+        if not webhook_urls:
             print("Discord Webhook URL not configured. Skipping death notification.")
             return
 
@@ -48,14 +48,15 @@ class DiscordNotifier:
                 "color": 0xFF0000,
                 "description": (
                     f"Died at level **{death_level}**\n"
-                    f"{death_time_str} {time_ago_str}\n"
+                    f"{death_time_str}\n"
                     f"Killed by: {death_by}"
                 )
             }]
         }
 
-        try:
-            response = await client.post(webhook_url, json=payload)
-            response.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            print(f"Failed to send death embed to Discord: {e}")
+        for webhook_url in webhook_urls:
+            try:
+                response = await client.post(webhook_url, json=payload)
+                response.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                print(f"Failed to send death embed to Discord ({webhook_url}): {e}")

@@ -2,7 +2,8 @@
 """
 
 from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
+from pydantic import ConfigDict, field_validator
+from typing import List
 
 
 class Settings(BaseSettings):
@@ -22,11 +23,16 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     DISCORD_WEBHOOK_URL: str = ""
-    DISCORD_DEATHS_WEBHOOK_URL: str = ""
+    DISCORD_DEATHS_WEBHOOK_URLS: str = ""
 
-    SCHEDULER_TIMER_MINUTES: int = 5
-    MIN_LEVEL_TO_CHECK_DEATH: int = 30
+    SCHEDULER_TIMER_MINUTES: int = 1
+    MIN_LEVEL_TO_CHECK_DEATH: int = 29
 
+    @property
+    def discord_deaths_webhook_urls_list(self) -> List[str]:
+        if not self.DISCORD_DEATHS_WEBHOOK_URLS:
+            return []
+        return [url.strip() for url in self.DISCORD_DEATHS_WEBHOOK_URLS.split(",") if url.strip()]
 
     model_config = ConfigDict(env_file=".env", case_sensitive=True)
 
